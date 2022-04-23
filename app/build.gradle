@@ -3,14 +3,7 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        release {
-            storeFile file('F:\\Projek\\Android\\JKS\\KomputerKit.jks')
-            storePassword 'komputerkit'
-            keyAlias 'komputerkit'
-            keyPassword 'komputerkit'
-        }
-    }
+
     compileSdk 31
 
     defaultConfig {
@@ -21,7 +14,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.release
+        
     }
 
     buildTypes {
