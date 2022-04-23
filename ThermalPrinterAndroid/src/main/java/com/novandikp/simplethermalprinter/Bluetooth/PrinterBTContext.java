@@ -44,7 +44,7 @@ public class PrinterBTContext {
 
     public interface OnScanDevice{
         void onScanStart();
-        void onScanCompleted();
+        void onScanCompleted(List<DeviceBT> devices);
     }
 
     public interface OnConnect {
@@ -260,7 +260,7 @@ public class PrinterBTContext {
                         context.unregisterReceiver(receiverScan);
                         receiverScan = null;
                         if(onScanDeviceListener!=null) {
-                            onScanDeviceListener.onScanCompleted();
+                            onScanDeviceListener.onScanCompleted(getListBluetoothDevice());
                         }
                     }
                 }

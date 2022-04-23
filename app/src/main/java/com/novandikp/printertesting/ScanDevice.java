@@ -93,10 +93,11 @@ public class ScanDevice extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onScanCompleted() {
+                    public void onScanCompleted(List<DeviceBT> devices) {
                         dialog.cancel();
                         refreshData();
                     }
+
                 });
             }
         }
