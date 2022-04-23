@@ -14,7 +14,7 @@ Based : [ESC/POS Thermal Printer](https://github.com/DantSu/ESCPOS-ThermalPrinte
 ## Installation
 
 
-**Step 1.** Add the [JitPack](https://jitpack.io/com/github/novandikp/SimpleThermalPrinter/v.1.0) repository to your build file. Add it in your root `/build.gradle` at the end of repositories:
+**Step 1.** Add the [JitPack](https://jitpack.io/com/github/novandikp/SimpleThermalPrinter/v1.1) repository to your build file. Add it in your root `/build.gradle` at the end of repositories:
 
 ```
 allprojects {
@@ -30,7 +30,7 @@ allprojects {
 ```
 dependencies {
     ...
-    implementation 'com.github.novandikp:SimpleThermalPrinter:v.1.0'
+    implementation 'com.github.novandikp:SimpleThermalPrinter:v1.1'
 }
 ```
 
