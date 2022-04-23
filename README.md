@@ -108,7 +108,7 @@ Request Permission
 ```
 ### Initialize Bluetooth Printer Class
 ```java
-    PrinterBTContext printerBTContext = PrinterBTContext.getInstance(this, resultPrint);
+PrinterBTContext printerBTContext = PrinterBTContext.getInstance(this, resultPrint);
 ```
 
 To initialize need parameter Context and PrintTextBuilder
@@ -154,6 +154,8 @@ printerBTContext.connectDevice(deviceBT,new PrinterBTContext.OnConnect() {
 });
 ```
 
+DeviceBT is required parameter for connect printer can get from `getListBluetoothDevice()`.
+
 
 `State_Bluetooth` is enum 
 - NONE
@@ -180,3 +182,73 @@ printerBTContext.connectDevice(deviceBT,new PrinterBTContext.OnConnect() {
 4. `isConnectedDevice()`
    
    Return is device connected
+
+## USB
+
+### Initialize Class
+```java
+PrinterUSBContext printerUSBContext  = PrinterUSBContext.getInstance(this, resultPrint);;
+```
+
+To initialize need Context and PrintTextBuilder
+
+
+### Print
+```java
+printerUSBContext.print();
+```
+
+### *Important*
+
+Always call `removeReceiver()` onDestroy
+```java
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    printerUSBContext.removeReceiver();
+}
+```
+
+## Size Paper
+For Default all printer set 58mm, to set another size you can set with function `setTypePrinter`
+
+### Example
+```java
+printerBTContext.setTypePrinter(Printer58mm.device());
+printerUSBContext.setTypePrinter(Printer76mm.device());
+```
+
+To make custom size you can make like this
+```java
+public class PrinterA5 implements TypePrinter
+{
+    public static PrinterA5 printerA5;
+
+    public static PrinterA5 device(){
+        if(PrinterA5.printerA5 == null){
+            PrinterA5.printerA5 = new PrinterA5();
+        }
+        return  PrinterA5.printerA5;
+    }
+
+    @Override
+    public float getPrinterWidth() {
+        return 160f;
+    }
+
+    @Override
+    public int getPrinterDPI() {
+        return 231;
+    }
+
+    @Override
+    public int getMaxCharColumns() {
+        return 50;
+    }
+}
+```
+
+So you can call your custom size simply
+```java
+printerUSBContext.setTypePrinter(PrinterA5.device());
+```
