@@ -4,6 +4,12 @@ Android Library Based ESC/POS Thermal Printer
 
 Based : [ESC/POS Thermal Printer](https://github.com/DantSu/ESCPOS-ThermalPrinter-Android)
 
+## Table of Content
+1. [Installition](#installation)
+2. [Print Builder](#print-builder)
+3. [Bluetooth](#bluetooth)
+4. [USB](#usb)
+
 
 ## Installation
 
@@ -36,25 +42,25 @@ In making a receipt or other required several formats. With this library you can
 
 **Step 1.** Initialize Class
 ```java
-    PrintTextBuilder resultPrint = new PrintTextBuilder();
+PrintTextBuilder resultPrint = new PrintTextBuilder();
 ```
 
 **Step 2.** Add Text
 ```java
-    resultPrint.addTitle("Faktur Penjualan");
-    resultPrint.addDivider();
-    resultPrint.addTextPair("Pelanggan","Novandi Kevin Pratama");
-    resultPrint.addTextPair("Faktur","000001");
-    resultPrint.addDivider();
-        for (int i = 0; i < 3; i++) {
-            ColumnPrinter columnNama = new ColumnPrinter("Baju Korea Keren");
-            ColumnPrinter columnSubHarga = new ColumnPrinter("12.000", AlignColumn.RIGHT);
-            resultPrint.addColumn(columnNama, columnSubHarga);
-            resultPrint.addText("x2");
-            resultPrint.addEnter();
-        }
-    resultPrint.addDivider();
-    resultPrint.addTextPair("Total","40.000", AlignColumn.RIGHT);
+resultPrint.addTitle("Faktur Penjualan");
+resultPrint.addDivider();
+resultPrint.addTextPair("Pelanggan","Novandi Kevin Pratama");
+resultPrint.addTextPair("Faktur","000001");
+resultPrint.addDivider();
+    for (int i = 0; i < 3; i++) {
+        ColumnPrinter columnNama = new ColumnPrinter("Baju Korea Keren");
+        ColumnPrinter columnSubHarga = new ColumnPrinter("12.000", AlignColumn.RIGHT);
+        resultPrint.addColumn(columnNama, columnSubHarga);
+        resultPrint.addText("x2");
+        resultPrint.addEnter();
+    }
+resultPrint.addDivider();
+resultPrint.addTextPair("Total","40.000", AlignColumn.RIGHT);
 ```
 
 We can add Title, Text, Text Pair, Divider, and Table with method of `PrintTextBuilder`
