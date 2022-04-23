@@ -28,6 +28,37 @@ dependencies {
 }
 ```
 
+## Print Builder
+
+In making a receipt or other required several formats. With this library you can create easily.
+
+### Class PrintTextBuilder
+
+**Step 1.** Initialize Class
+```java
+    PrintTextBuilder resultPrint = new PrintTextBuilder();
+```
+
+**Step 2.** Add Text
+```java
+    resultPrint.addTitle("Faktur Penjualan");
+    resultPrint.addDivider();
+    resultPrint.addTextPair("Pelanggan","Novandi Kevin Pratama");
+    resultPrint.addTextPair("Faktur","000001");
+    resultPrint.addDivider();
+        for (int i = 0; i < 3; i++) {
+            ColumnPrinter columnNama = new ColumnPrinter("Baju Korea Keren");
+            ColumnPrinter columnSubHarga = new ColumnPrinter("12.000", AlignColumn.RIGHT);
+            resultPrint.addColumn(columnNama, columnSubHarga);
+            resultPrint.addText("x2");
+            resultPrint.addEnter();
+        }
+    resultPrint.addDivider();
+    resultPrint.addTextPair("Total","40.000", AlignColumn.RIGHT);
+```
+
+We can add Title, Text, Text Pair, Divider, and Table with method of `PrintTextBuilder`
+
 ## Bluetooth
 
 ### Bluetooth permission
@@ -51,7 +82,6 @@ This sample code for requsting permission
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
@@ -73,6 +103,80 @@ Request Permission
 } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S && ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
 } else {
-// Code
+        // Code
 }
 ```
+### Initialize Bluetooth Printer Class
+```java
+    PrinterBTContext printerBTContext = PrinterBTContext.getInstance(this, resultPrint);
+```
+
+To initialize need parameter Context and PrintTextBuilder
+
+### Scan Bluetooth
+
+```java
+printerBTContext.discoveryDevice(new PrinterBTContext.OnScanDevice() {
+    @Override
+    public void onScanStart() {
+        //  Code when start example loading dialog showing
+    }
+
+    @Override
+    public void onScanCompleted() {
+        //  Code when scan is complete example close loading dialog
+    }
+});
+```
+
+### Get Bluetooth Printer
+
+```java
+printerBTContext.getListBluetoothDevice()
+```
+
+`getListBluetoothDevice()` will return `List<DeviceBT>`
+
+`DeviceBT` has 3 property :
+1. String name
+2. String address
+3. BluetoothConnection connection
+
+
+### Connect Printer
+```java
+printerBTContext.connectDevice(deviceBT,new PrinterBTContext.OnConnect() {
+    @Override
+    public void onConnect(State_Bluetooth state_bt) {
+        // Code
+
+    }
+});
+```
+
+
+`State_Bluetooth` is enum 
+- NONE
+- CONNECTED
+- PAIRED
+- BOUNDING
+- ERROR_BOUNDED
+- NOTCONNECTED
+
+### Another Function of PrinterBTContext
+
+1. `getDeviceName()`
+
+   Return Device Name Connected
+
+2. `print()`
+   
+   For Print Text
+
+3. `isEnabled()`
+   
+   Return is Bluetooth Enabled or Disabled
+
+4. `isConnectedDevice()`
+   
+   Return is device connected
