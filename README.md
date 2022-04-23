@@ -129,7 +129,7 @@ printerBTContext.discoveryDevice(new PrinterBTContext.OnScanDevice() {
     }
 
     @Override
-    public void onScanCompleted() {
+    public void onScanCompleted(List<DeviceBT> devices) {
         //  Code when scan is complete example close loading dialog
     }
 });
