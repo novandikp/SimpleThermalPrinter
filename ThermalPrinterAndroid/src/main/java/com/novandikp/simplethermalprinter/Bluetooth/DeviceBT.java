@@ -12,6 +12,7 @@ public class DeviceBT {
         this.name = name;
         this.connection = connection;
         this.state = State_Bluetooth.NONE;
+        this.address =address;
     }
 
     public String getAddress() {

@@ -25,6 +25,6 @@ public class Printer76mm implements TypePrinter
 
     @Override
     public int getMaxCharColumns() {
-        return 32;
+        return 40;
     }
 }

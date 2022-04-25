@@ -8,14 +8,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.dantsu.escposprinter.EscPosPrinter;
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection;
+import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnections;
 import com.novandikp.simplethermalprinter.PrintTextBuilder;
 import com.novandikp.simplethermalprinter.Type.Printer58mm;
 import com.novandikp.simplethermalprinter.TypePrinter;
@@ -34,6 +37,8 @@ public class PrinterBTContext {
     private List<DeviceBT> deviceBTS;
     private HashSet<String> deviceSet = new HashSet<>();
     public static PrinterBTContext instance;
+    private SharedPreferences device_bt_simplethermalprinter;
+    private SharedPreferences.Editor device_editor;
 
 
     private BroadcastReceiver receiverConnect;
@@ -53,9 +58,12 @@ public class PrinterBTContext {
 
     public PrinterBTContext(Context context) {
         this.context = context;
+        device_bt_simplethermalprinter = context.getSharedPreferences("device_bt_simplethermalprinter",Context.MODE_PRIVATE);
+        device_editor = device_bt_simplethermalprinter.edit();
         deviceBTS = new ArrayList<>();
         type = Printer58mm.device();
         bAdapter = BluetoothAdapter.getDefaultAdapter();
+
         if (bAdapter != null) {
             supportedDevice = true;
         }
@@ -63,6 +71,8 @@ public class PrinterBTContext {
 
     public PrinterBTContext(Context context, PrintTextBuilder textBuilder) {
         this.context = context;
+        device_bt_simplethermalprinter = context.getSharedPreferences("device_bt_simplethermalprinter",Context.MODE_PRIVATE);
+        device_editor = device_bt_simplethermalprinter.edit();
         deviceBTS = new ArrayList<>();
         this.textBuilder = textBuilder;
         type = Printer58mm.device();
@@ -107,22 +117,51 @@ public class PrinterBTContext {
 
     @SuppressLint("MissingPermission")
     public List<DeviceBT> getListBluetoothDevice() {
+
         if (isPermissionGranted()) {
             if (supportedDevice) {
                 if (bAdapter.isEnabled()) {
+                    getDeviceConnected();
                     BluetoothPrintersConnections bluetoothConnection = new BluetoothPrintersConnections();
                     for (BluetoothConnection connection : bluetoothConnection.getList()) {
                         BluetoothDevice device = connection.getDevice();
                         String address = device.getAddress();
                         if (!deviceSet.contains(address)) {
                             deviceSet.add(address);
-                            deviceBTS.add(new DeviceBT(device.getName(), address, connection));
+                            DeviceBT btDev =new DeviceBT(device.getName(), address, connection);
+
+                            if(btDev.getConnection().isConnected()){
+                              btDev.setState(State_Bluetooth.CONNECTED);
+                            }else if(deviceConnected!= null){
+                                if(address.equals(deviceConnected.getDevice().getAddress())){
+                                    btDev.setState(State_Bluetooth.CONNECTED);
+                                }
+                            }
+                            deviceBTS.add(btDev);
+                        }else{
+                            if(deviceConnected!= null){
+                                if(address.equals(deviceConnected.getDevice().getAddress())){
+                                    setStateConnectedByAddress(address);
+                                }
+                            }
                         }
                     }
                 }
             }
         }
         return deviceBTS;
+    }
+
+
+    private void setStateConnectedByAddress(String address){
+        for(DeviceBT device : deviceBTS){
+            if(device.getAddress().equals(address)){
+                device.setState(State_Bluetooth.CONNECTED);
+            }else{
+                device.setState(State_Bluetooth.NONE);
+            }
+            deviceBTS.set(deviceBTS.indexOf(device),device);
+        }
     }
 
     public boolean isPermissionGranted() {
@@ -152,34 +191,29 @@ public class PrinterBTContext {
             return android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S || ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public BluetoothConnection getDeviceConnected() {
+    private void getDeviceConnected() {
         if(deviceConnected==null) {
-            deviceConnected = BluetoothPrintersConnections.selectFirstPaired();
+            deviceConnected = BluetoothPrintersConnections.selectFirstPaired(device_bt_simplethermalprinter);
         }
-        return deviceConnected;
     }
 
     @SuppressLint("MissingPermission")
     public String getDeviceName() {
-        if(deviceConnected==null) {
-            deviceConnected = BluetoothPrintersConnections.selectFirstPaired();
-        }
-        if (deviceConnected == null) {
-            return "Not Connected";
-        } else {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                return "Permisson Rejected";
+        try{
+           getDeviceConnected();
+            if (deviceConnected == null) {
+                return "Not Connected";
             } else {
                 return deviceConnected.getDevice().getName();
             }
+        }catch (Exception e){
+            return "Not Connected";
         }
+
     }
 
     public boolean isConnectedDevice(){
-        if(deviceConnected==null) {
-            deviceConnected = BluetoothPrintersConnections.selectFirstPaired();
-        }
-
+        getDeviceConnected();
         if(deviceConnected!=null){
             return deviceConnected.isConnected();
         }
@@ -236,9 +270,14 @@ public class PrinterBTContext {
                     context.registerReceiver(receiverConnect, intentFilter);
                     setStateConnectListener(State_Bluetooth.BOUNDING);
                 } else {
-                    deviceConnected = btConnection;
+
                     btConnection.connect();
+                    device_editor.putString("address",btConnection.getDevice().getAddress());
+                    device_editor.commit();
+                    deviceConnected = btConnection;
+                    setStateConnectedByAddress(btConnection.getDevice().getAddress());
                     setStateConnectListener(State_Bluetooth.CONNECTED);
+
                 }
             }
         } catch (Exception e) {
@@ -297,12 +336,19 @@ public class PrinterBTContext {
 
     public void print(){
         if(textBuilder!=null) {
-            EscPosPrinter printer = null;
-            try {
-                printer = new EscPosPrinter(BluetoothPrintersConnections.selectFirstPaired(), type.getPrinterDPI(), type.getPrinterWidth(), type.getMaxCharColumns());
-                printer.printFormattedText(textBuilder.build());
-            } catch (Exception e) {
-                e.printStackTrace();
+            if(deviceConnected == null){
+                deviceConnected = BluetoothPrintersConnections.selectFirstPaired(device_bt_simplethermalprinter);
+                if(deviceConnected!=null){
+                    print();
+                }
+            }else{
+                EscPosPrinter printer = null;
+                try {
+                    printer = new EscPosPrinter(deviceConnected, type.getPrinterDPI(), type.getPrinterWidth(), type.getMaxCharColumns());
+                    printer.printFormattedText(textBuilder.build());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

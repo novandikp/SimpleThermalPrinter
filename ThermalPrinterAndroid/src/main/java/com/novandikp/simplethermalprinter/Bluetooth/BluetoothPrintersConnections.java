@@ -3,6 +3,7 @@ package com.novandikp.simplethermalprinter.Bluetooth;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
+import android.content.SharedPreferences;
 
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection;
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnections;
@@ -10,16 +11,18 @@ import com.dantsu.escposprinter.exceptions.EscPosConnectionException;
 
 public class BluetoothPrintersConnections extends BluetoothConnections {
 
-    public static BluetoothConnection selectFirstPaired() {
+    public static BluetoothConnection selectFirstPaired(SharedPreferences preferences) {
         com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections printers = new com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections();
         BluetoothConnection[] bluetoothPrinters = printers.getList();
         if (bluetoothPrinters != null && bluetoothPrinters.length > 0) {
             for (BluetoothConnection printer : bluetoothPrinters) {
                 try {
-                    if(isPrinter(printer.getDevice())){
-                        return printer.connect();
+                    if(isPrinter(printer.getDevice())   && printer.isConnected()){
+                        return printer;
+                    }else if(isPrinter(printer.getDevice()) && printer.getDevice().getAddress().equals(preferences.getString("address", ""))){
+                        return  printer.connect();
                     }
-                } catch (EscPosConnectionException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

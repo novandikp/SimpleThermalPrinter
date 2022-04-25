@@ -24,6 +24,7 @@ public class PrinterUSBContext {
     private boolean connectedDevice = false;
     private UsbConnection usbConnection;
     private UsbManager usbManager;
+    private boolean alreadyService;
     public static  PrinterUSBContext instance;
 
     public static PrinterUSBContext getInstance(Context context, PrintTextBuilder textBuilder){
@@ -41,6 +42,7 @@ public class PrinterUSBContext {
     }
 
     public void setTypePrinter(TypePrinter type){
+        this.usbReceiver = null;
         this.usbReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();

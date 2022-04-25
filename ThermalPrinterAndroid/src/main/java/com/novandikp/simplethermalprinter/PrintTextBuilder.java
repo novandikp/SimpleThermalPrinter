@@ -8,6 +8,7 @@ public class PrintTextBuilder {
 
     public PrintTextBuilder(TypePrinter typePrinter){
         printer = typePrinter;
+        textBuilder = new StringBuilder();
     }
 
     public  PrintTextBuilder(){
@@ -49,9 +50,16 @@ public class PrintTextBuilder {
     }
 
     public void addDivider(){
-        String divider = "==============================";
+
+        StringBuilder divider = new StringBuilder("==============================");
+        if(printer != null){
+            divider = new StringBuilder();
+            for (int i = 0; i < printer.getMaxCharColumns(); i++) {
+                divider.append("=");
+            }
+        }
         setCenterAlign();
-        textBuilder.append(divider);
+        textBuilder.append(divider.toString());
         addEnter();
     }
 
