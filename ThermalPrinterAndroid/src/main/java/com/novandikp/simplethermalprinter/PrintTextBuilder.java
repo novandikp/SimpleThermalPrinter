@@ -49,8 +49,7 @@ public class PrintTextBuilder {
         textBuilder.append(enter);
     }
 
-    public void addDivider(){
-
+    private String getDivider(TypePrinter printer){
         StringBuilder divider = new StringBuilder("==============================");
         if(printer != null){
             divider = new StringBuilder();
@@ -58,8 +57,14 @@ public class PrintTextBuilder {
                 divider.append("=");
             }
         }
+        return divider.toString();
+    }
+
+    public void addDivider(){
+
+
         setCenterAlign();
-        textBuilder.append(divider.toString());
+        textBuilder.append(getDivider(printer));
         addEnter();
     }
 
@@ -154,8 +159,13 @@ public class PrintTextBuilder {
     }
 
 
-    public String build(){
-        return textBuilder.toString();
+    public String build(TypePrinter typePrinter){
+
+        String result =textBuilder.toString();
+        if(typePrinter.getMaxCharColumns() != printer.getMaxCharColumns()){
+           result=  result.replaceAll(getDivider(printer),getDivider(typePrinter));
+        }
+        return  result;
     }
 
 }

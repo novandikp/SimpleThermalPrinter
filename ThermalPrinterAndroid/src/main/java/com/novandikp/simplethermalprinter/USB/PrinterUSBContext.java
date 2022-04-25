@@ -57,7 +57,7 @@ public class PrinterUSBContext {
                                     printer = new EscPosPrinter(new UsbConnection(usbManager, usbDevice), type.getPrinterDPI(), type.getPrinterWidth(), type.getMaxCharColumns());
                                     printer
                                             .printFormattedText(
-                                                    textBuilder.build()
+                                                    textBuilder.build(type)
                                             );
                                     connectedDevice = true;
                                 } catch (Exception e) {
@@ -107,6 +107,8 @@ public class PrinterUSBContext {
     }
 
     public void print(){
+        usbConnection = UsbPrintersConnections.selectFirstConnected(context);
+        usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         if (usbConnection != null && usbManager != null) {
             PendingIntent permissionIntent = PendingIntent.getBroadcast(
                     context,

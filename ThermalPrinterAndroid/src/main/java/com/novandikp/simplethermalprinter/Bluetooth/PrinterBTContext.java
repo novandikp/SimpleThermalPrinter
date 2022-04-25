@@ -345,7 +345,7 @@ public class PrinterBTContext {
                 EscPosPrinter printer = null;
                 try {
                     printer = new EscPosPrinter(deviceConnected, type.getPrinterDPI(), type.getPrinterWidth(), type.getMaxCharColumns());
-                    printer.printFormattedText(textBuilder.build());
+                    printer.printFormattedText(textBuilder.build(type));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
