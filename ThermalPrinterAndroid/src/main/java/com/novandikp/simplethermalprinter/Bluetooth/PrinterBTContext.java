@@ -100,6 +100,10 @@ public class PrinterBTContext {
         this.type = typePrinter;
     }
 
+    public void setPrinterText(PrintTextBuilder printerTextBuilder) {
+        this.textBuilder = printerTextBuilder;
+    }
+
     @SuppressLint("MissingPermission")
     private void addScanDevice(Intent intent){
         String action = intent.getAction();
