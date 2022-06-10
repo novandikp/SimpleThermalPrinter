@@ -15,6 +15,8 @@ import com.novandikp.simplethermalprinter.PrintTextBuilder;
 import com.novandikp.simplethermalprinter.Type.Printer58mm;
 import com.novandikp.simplethermalprinter.TypePrinter;
 
+import java.lang.reflect.Type;
+
 public class PrinterUSBContext {
     private  final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     private Context context= null;
@@ -32,13 +34,36 @@ public class PrinterUSBContext {
             instance = new PrinterUSBContext(context,textBuilder);
         }
         return instance;
+
     }
 
+
+    public static PrinterUSBContext getInstance(Context context){
+        if(instance == null){
+            instance = new PrinterUSBContext(context);
+        }
+        return instance;
+    }
+
+
+    public static void setTextBuilder(PrintTextBuilder textBuilder){
+        instance.textBuilder = textBuilder;
+        instance.setTypePrinter(Printer58mm.device());
+    }
+
+    public static void setTextBuilder(PrintTextBuilder textBuilder, TypePrinter typePrinter){
+        instance.textBuilder = textBuilder;
+        instance.setTypePrinter(typePrinter);
+    }
 
     public PrinterUSBContext(Context context, PrintTextBuilder textBuilder) {
         this.context = context;
         this.textBuilder = textBuilder;
         setTypePrinter(Printer58mm.device());
+    }
+
+    public PrinterUSBContext(Context context) {
+        this.context = context;
     }
 
     public void setTypePrinter(TypePrinter type){
