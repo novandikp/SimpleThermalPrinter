@@ -34,8 +34,12 @@ public class BluetoothPrintersConnections extends BluetoothConnections {
     public static boolean isPrinter(BluetoothDevice device){
          int majDeviceCl = device.getBluetoothClass().getMajorDeviceClass(),
                 deviceCl = device.getBluetoothClass().getDeviceClass();
-
-        return  ((majDeviceCl == BluetoothClass.Device.Major.IMAGING && (deviceCl == 1664 || deviceCl == BluetoothClass.Device.Major.IMAGING)) || device.getName().equals("InnerPrinter")) ;
+        boolean printer = false;
+        try {
+            printer =((majDeviceCl == BluetoothClass.Device.Major.IMAGING && (deviceCl == 1664 || deviceCl == BluetoothClass.Device.Major.IMAGING)) || device.getName().equals("InnerPrinter")) ;
+        } catch (Exception e) {
+        }
+        return  printer;
     }
 
     @SuppressLint("MissingPermission")
