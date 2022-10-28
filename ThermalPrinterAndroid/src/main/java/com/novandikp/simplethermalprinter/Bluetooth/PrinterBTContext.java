@@ -155,6 +155,42 @@ public class PrinterBTContext {
         }
         return deviceBTS;
     }
+    
+     @SuppressLint("MissingPermission")
+    public List<DeviceBT> getListBluetoothDeviceSaved() {
+
+        if (isPermissionGranted()) {
+            if (supportedDevice) {
+                if (bAdapter.isEnabled()) {
+                    BluetoothPrintersConnections bluetoothConnection = new BluetoothPrintersConnections();
+                    for (BluetoothConnection connection : bluetoothConnection.getList()) {
+                        BluetoothDevice device = connection.getDevice();
+                        String address = device.getAddress();
+                        if (!deviceSet.contains(address)) {
+                            deviceSet.add(address);
+                            DeviceBT btDev =new DeviceBT(device.getName(), address, connection);
+
+                            if(btDev.getConnection().isConnected()){
+                              btDev.setState(State_Bluetooth.CONNECTED);
+                            }else if(deviceConnected!= null){
+                                if(address.equals(deviceConnected.getDevice().getAddress())){
+                                    btDev.setState(State_Bluetooth.CONNECTED);
+                                }
+                            }
+                            deviceBTS.add(btDev);
+                        }else{
+                            if(deviceConnected!= null){
+                                if(address.equals(deviceConnected.getDevice().getAddress())){
+                                    setStateConnectedByAddress(address);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return deviceBTS;
+    }
 
 
     private void setStateConnectedByAddress(String address){
