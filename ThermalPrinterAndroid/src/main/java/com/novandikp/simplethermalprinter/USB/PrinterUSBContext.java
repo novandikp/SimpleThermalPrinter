@@ -153,6 +153,7 @@ public class PrinterUSBContext {
         if(usbReceiver!=null) {
             if(usbReceiver.isOrderedBroadcast()){
                 context.unregisterReceiver(usbReceiver);
+                usbReceiver=null;
             }
         }
     }
