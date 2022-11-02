@@ -19,7 +19,7 @@ import java.lang.reflect.Type;
 
 public class PrinterUSBContext {
     private  final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
-    private  final String ACTION_USB_PRINTPERMISSION = "com.novandikp.simplethermalprinter.USB_PERMISSION";
+    private  String ACTION_USB_PRINTPERMISSION = "com.novandikp.simplethermalprinter.USB_PERMISSION";
     private Context context= null;
     private BroadcastReceiver usbReceiver;
     private PrintTextBuilder textBuilder = null;
@@ -60,6 +60,8 @@ public class PrinterUSBContext {
     public PrinterUSBContext(Context context, PrintTextBuilder textBuilder) {
         this.context = context;
         this.textBuilder = textBuilder;
+        String uniqueTimestamp = String.valueOf(System.currentTimeMillis());
+        ACTION_USB_PRINTPERMISSION = ACTION_USB_PRINTPERMISSION + uniqueTimestamp;
         setTypePrinter(Printer58mm.device());
     }
 
