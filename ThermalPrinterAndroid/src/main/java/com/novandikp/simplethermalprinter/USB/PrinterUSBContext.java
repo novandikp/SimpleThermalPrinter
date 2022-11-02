@@ -154,6 +154,12 @@ public class PrinterUSBContext {
         if(usbReceiver!=null) {
             if(usbReceiver.isOrderedBroadcast()){
                 context.unregisterReceiver(usbReceiver);
+                PendingIntent.getBroadcast(
+                        context,
+                        0,
+                        new Intent(ACTION_USB_PRINTPERMISSION),
+                        android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S ? PendingIntent.FLAG_MUTABLE : 0
+                ).cancel();
                 usbReceiver=null;
             }
         }
