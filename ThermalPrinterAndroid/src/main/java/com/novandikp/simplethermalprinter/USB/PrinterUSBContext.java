@@ -19,6 +19,7 @@ import java.lang.reflect.Type;
 
 public class PrinterUSBContext {
     private  final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
+    private  final String ACTION_USB_PRINTPERMISSION = "com.novandikp.simplethermalprinter.USB_PERMISSION";
     private Context context= null;
     private BroadcastReceiver usbReceiver;
     private PrintTextBuilder textBuilder = null;
@@ -71,7 +72,7 @@ public class PrinterUSBContext {
         this.usbReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-                if (ACTION_USB_PERMISSION.equals(action)) {
+                if (ACTION_USB_PRINTPERMISSION.equals(action)) {
                     synchronized (this) {
                         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
                         usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
@@ -138,10 +139,10 @@ public class PrinterUSBContext {
             PendingIntent permissionIntent = PendingIntent.getBroadcast(
                     context,
                     0,
-                    new Intent(ACTION_USB_PERMISSION),
+                    new Intent(ACTION_USB_PRINTPERMISSION),
                     android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S ? PendingIntent.FLAG_MUTABLE : 0
             );
-            IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+            IntentFilter filter = new IntentFilter(ACTION_USB_PRINTPERMISSION);
             context.registerReceiver(this.usbReceiver, filter);
             usbManager.requestPermission(usbConnection.getDevice(), permissionIntent);
             connectedDevice = true;
