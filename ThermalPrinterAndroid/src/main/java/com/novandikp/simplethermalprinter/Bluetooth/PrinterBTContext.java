@@ -231,6 +231,13 @@ public class PrinterBTContext {
             return android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S || ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED;
     }
 
+    public void disconnect(){
+        if(deviceConnected!=null){
+            deviceConnected.disconnect();
+            deviceConnected=null;
+        }
+    }
+
     private void getDeviceConnected() {
         if(deviceConnected==null) {
             deviceConnected = BluetoothPrintersConnections.selectFirstPaired(device_bt_simplethermalprinter);
