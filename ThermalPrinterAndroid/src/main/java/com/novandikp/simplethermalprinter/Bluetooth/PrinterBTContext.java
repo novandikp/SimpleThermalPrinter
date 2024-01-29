@@ -393,6 +393,7 @@ public class PrinterBTContext {
                 try {
                     printer = new EscPosPrinter(deviceConnected, type.getPrinterDPI(), type.getPrinterWidth(), type.getMaxCharColumns());
                     printer.printFormattedText(textBuilder.build(type));
+                    disconnect();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
